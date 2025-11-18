@@ -378,122 +378,119 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        {/* Present Illness History */}
+        <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
+                <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-800">Present Illness History</h3>
+            </div>
             
-            {/* Left Column: Present Illness & Vitals */}
-            <div className="space-y-4 sm:space-y-6">
-                <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
-                    <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-800">Present Illness History</h3>
-                </div>
-                
-                <div>
-                    <Label>Reason for Presentation</Label>
-                    <TextArea 
-                        value={formData.PresentIllnessHistory.ReasonForPresentation}
-                        onChange={(e) => handleChange('PresentIllnessHistory', 'ReasonForPresentation', e.target.value)}
-                        placeholder="Describe the main complaint..."
-                        rows={3}
-                    />
-                </div>
+            <div>
+                <Label>Reason for Presentation</Label>
+                <TextArea 
+                    value={formData.PresentIllnessHistory.ReasonForPresentation}
+                    onChange={(e) => handleChange('PresentIllnessHistory', 'ReasonForPresentation', e.target.value)}
+                    placeholder="Describe the main complaint..."
+                    rows={3}
+                />
+            </div>
 
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-semibold text-slate-700 mb-4 flex items-center">
-                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-2"></span>
-                        Vital Signs
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <Label>Heart Rate</Label>
-                            <Input 
-                                value={formData.PresentIllnessHistory.VitalSigns.HeartRate}
-                                onChange={(e) => handleVitalChange('HeartRate', e.target.value, /^[0-9]*$/)}
-                                placeholder="e.g. 110"
-                                suffix="bpm"
-                            />
-                        </div>
-                        <div>
-                            <Label>Blood Pressure</Label>
-                            <Input 
-                                value={formData.PresentIllnessHistory.VitalSigns.BloodPressure}
-                                onChange={(e) => handleVitalChange('BloodPressure', e.target.value, /^[0-9/]*$/)}
-                                placeholder="e.g. 140/90"
-                                suffix="mmHg"
-                            />
-                        </div>
-                        <div>
-                            <Label>O2 Saturation</Label>
-                            <Input 
-                                value={formData.PresentIllnessHistory.VitalSigns.OxygenSaturation}
-                                onChange={(e) => handleVitalChange('OxygenSaturation', e.target.value, /^[0-9]*$/)}
-                                placeholder="e.g. 92"
-                                suffix="%"
-                            />
-                        </div>
-                        <div>
-                            <Label>Temperature</Label>
-                            <Input 
-                                value={formData.PresentIllnessHistory.VitalSigns.Temperature}
-                                onChange={(e) => handleVitalChange('Temperature', e.target.value, /^[0-9.]*$/)}
-                                placeholder="e.g. 37.3"
-                                suffix="C"
-                            />
-                        </div>
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <h4 className="text-sm font-semibold text-slate-700 mb-4 flex items-center">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-2"></span>
+                    Vital Signs
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <Label>Heart Rate</Label>
+                        <Input 
+                            value={formData.PresentIllnessHistory.VitalSigns.HeartRate}
+                            onChange={(e) => handleVitalChange('HeartRate', e.target.value, /^[0-9]*$/)}
+                            placeholder="e.g. 110"
+                            suffix="bpm"
+                        />
+                    </div>
+                    <div>
+                        <Label>Blood Pressure</Label>
+                        <Input 
+                            value={formData.PresentIllnessHistory.VitalSigns.BloodPressure}
+                            onChange={(e) => handleVitalChange('BloodPressure', e.target.value, /^[0-9/]*$/)}
+                            placeholder="e.g. 140/90"
+                            suffix="mmHg"
+                        />
+                    </div>
+                    <div>
+                        <Label>O2 Saturation</Label>
+                        <Input 
+                            value={formData.PresentIllnessHistory.VitalSigns.OxygenSaturation}
+                            onChange={(e) => handleVitalChange('OxygenSaturation', e.target.value, /^[0-9]*$/)}
+                            placeholder="e.g. 92"
+                            suffix="%"
+                        />
+                    </div>
+                    <div>
+                        <Label>Temperature</Label>
+                        <Input 
+                            value={formData.PresentIllnessHistory.VitalSigns.Temperature}
+                            onChange={(e) => handleVitalChange('Temperature', e.target.value, /^[0-9.]*$/)}
+                            placeholder="e.g. 37.3"
+                            suffix="C"
+                        />
                     </div>
                 </div>
             </div>
+        </div>
 
-            {/* Right Column: Elicited History */}
-            <div className="space-y-4 sm:space-y-6">
-                 <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
-                    <div className="w-2 h-6 bg-purple-500 rounded-full"></div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-800">Elicited History</h3>
-                </div>
-                
-                <div>
-                    <Label>Past Medical History</Label>
-                    <TextArea 
-                        value={formData.ElicitedHistory.PastMedicalHistory}
-                        onChange={(e) => handleChange('ElicitedHistory', 'PastMedicalHistory', e.target.value)}
-                        placeholder="Previous conditions..."
-                    />
-                </div>
-                
-                <div>
-                    <Label>Allergies</Label>
-                    <Input 
-                        value={formData.ElicitedHistory.Allergies}
-                        onChange={(e) => handleChange('ElicitedHistory', 'Allergies', e.target.value)}
-                        placeholder="e.g. Penicillin"
-                    />
-                </div>
+        {/* Elicited History - Below Present Illness */}
+        <div className="space-y-4 sm:space-y-6">
+             <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
+                <div className="w-2 h-6 bg-purple-500 rounded-full"></div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-800">Elicited History</h3>
+            </div>
+            
+            <div>
+                <Label>Past Medical History</Label>
+                <TextArea 
+                    value={formData.ElicitedHistory.PastMedicalHistory}
+                    onChange={(e) => handleChange('ElicitedHistory', 'PastMedicalHistory', e.target.value)}
+                    placeholder="Previous conditions..."
+                />
+            </div>
+            
+            <div>
+                <Label>Allergies</Label>
+                <Input 
+                    value={formData.ElicitedHistory.Allergies}
+                    onChange={(e) => handleChange('ElicitedHistory', 'Allergies', e.target.value)}
+                    placeholder="e.g. Penicillin"
+                />
+            </div>
 
-                <div>
-                    <Label>Medications</Label>
-                    <Input 
-                        value={formData.ElicitedHistory.Medications}
-                        onChange={(e) => handleChange('ElicitedHistory', 'Medications', e.target.value)}
-                        placeholder="Current medications..."
-                    />
-                </div>
+            <div>
+                <Label>Medications</Label>
+                <Input 
+                    value={formData.ElicitedHistory.Medications}
+                    onChange={(e) => handleChange('ElicitedHistory', 'Medications', e.target.value)}
+                    placeholder="Current medications..."
+                />
+            </div>
 
-                <div>
-                    <Label>Labs</Label>
-                    <TextArea 
-                        value={formData.ElicitedHistory.Labs}
-                        onChange={(e) => handleChange('ElicitedHistory', 'Labs', e.target.value)}
-                        placeholder="Relevant lab results..."
-                    />
-                </div>
+            <div>
+                <Label>Labs</Label>
+                <TextArea 
+                    value={formData.ElicitedHistory.Labs}
+                    onChange={(e) => handleChange('ElicitedHistory', 'Labs', e.target.value)}
+                    placeholder="Relevant lab results..."
+                />
+            </div>
 
-                <div>
-                    <Label>Imaging Results</Label>
-                    <TextArea 
-                        value={formData.ElicitedHistory.Imagings}
-                        onChange={(e) => handleChange('ElicitedHistory', 'Imagings', e.target.value)}
-                        placeholder="X-rays, CT scans, etc..."
-                    />
-                </div>
+            <div>
+                <Label>Imaging Results</Label>
+                <TextArea 
+                    value={formData.ElicitedHistory.Imagings}
+                    onChange={(e) => handleChange('ElicitedHistory', 'Imagings', e.target.value)}
+                    placeholder="X-rays, CT scans, etc..."
+                />
             </div>
         </div>
 
