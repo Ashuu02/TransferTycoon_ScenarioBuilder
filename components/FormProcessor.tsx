@@ -46,16 +46,19 @@ const Input = ({
   value, 
   onChange, 
   placeholder,
-  suffix
+  suffix,
+  id
 }: { 
   value: string; 
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
   placeholder?: string;
   suffix?: string;
+  id?: string;
 }) => (
   <div className="relative">
     <input
       type="text"
+      id={id}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
@@ -75,14 +78,17 @@ const TextArea = ({
   value, 
   onChange, 
   placeholder,
-  rows = 2
+  rows = 2,
+  id
 }: { 
   value: string; 
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; 
   placeholder?: string;
   rows?: number;
+  id?: string;
 }) => (
   <textarea
+    id={id}
     value={value}
     onChange={onChange}
     placeholder={placeholder}
@@ -121,7 +127,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
     return JSON.parse(JSON.stringify(INITIAL_DATA));
   });
   const [isReviewing, setIsReviewing] = useState(!!initialData);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<Array<{ message: string; fieldId: string }>>([]);
 
   // Helper to update nested state
   const handleChange = (section: string, field: string, value: string, subSection?: string) => {
@@ -152,43 +158,65 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
 
   // Validation function to check if all required fields are filled
   const validateForm = (): boolean => {
-    const errors: string[] = [];
+    const errors: Array<{ message: string; fieldId: string }> = [];
     
     if (!formData.ScenarioName?.trim()) {
-      errors.push('Scenario Name is required');
+      errors.push({ message: 'Scenario Name is required', fieldId: 'scenario-name' });
     }
     if (!formData.PresentIllnessHistory?.ReasonForPresentation?.trim()) {
-      errors.push('Reason for Presentation is required');
+      errors.push({ message: 'Reason for Presentation is required', fieldId: 'reason-presentation' });
     }
     if (!formData.ElicitedHistory?.PastMedicalHistory?.trim()) {
-      errors.push('Past Medical History is required');
+      errors.push({ message: 'Past Medical History is required', fieldId: 'past-medical-history' });
     }
     if (!formData.ElicitedHistory?.Allergies?.trim()) {
-      errors.push('Allergies is required (enter "None" if no allergies)');
+      errors.push({ message: 'Allergies is required (enter "None" if no allergies)', fieldId: 'allergies' });
     }
     if (!formData.ElicitedHistory?.Medications?.trim()) {
-      errors.push('Medications is required (enter "None" if no medications)');
+      errors.push({ message: 'Medications is required (enter "None" if no medications)', fieldId: 'medications' });
     }
     if (!formData.ElicitedHistory?.Labs?.trim()) {
-      errors.push('Labs is required');
+      errors.push({ message: 'Labs is required', fieldId: 'labs' });
     }
     if (!formData.ElicitedHistory?.Imagings?.trim()) {
-      errors.push('Imaging Results is required');
+      errors.push({ message: 'Imaging Results is required', fieldId: 'imagings' });
     }
     if (!formData.InterventionsAndRecommendations?.WhatHasBeenDone?.trim()) {
-      errors.push('What Has Been Done is required');
+      errors.push({ message: 'What Has Been Done is required', fieldId: 'what-has-been-done' });
     }
     if (!formData.InterventionsAndRecommendations?.WhatNeedsToBeDone?.trim()) {
-      errors.push('What Needs To Be Done is required');
+      errors.push({ message: 'What Needs To Be Done is required', fieldId: 'what-needs-to-be-done' });
     }
 
     setValidationErrors(errors);
     return errors.length === 0;
   };
 
+  // Function to scroll to and focus a field
+  const scrollToField = (fieldId: string) => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Focus the field after a short delay to ensure it's visible
+      setTimeout(() => {
+        field.focus();
+        // For textareas, also select the text
+        if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
+          (field as HTMLInputElement | HTMLTextAreaElement).select();
+        }
+      }, 300);
+    }
+  };
+
   const handleReview = () => {
     if (!validateForm()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to validation errors instead of top
+      setTimeout(() => {
+        const errorContainer = document.getElementById('validation-errors');
+        if (errorContainer) {
+          errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -202,7 +230,13 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
   const handleGenerate = () => {
     // Validate again before generating
     if (!validateForm()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to validation errors instead of top
+      setTimeout(() => {
+        const errorContainer = document.getElementById('validation-errors');
+        if (errorContainer) {
+          errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
     
@@ -372,6 +406,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
         <div className="bg-slate-50/50 p-4 sm:p-5 rounded-2xl border border-slate-100">
           <Label>Scenario Name</Label>
           <Input 
+            id="scenario-name"
             value={formData.ScenarioName}
             onChange={(e) => handleChange('root', 'ScenarioName', e.target.value)}
             placeholder="e.g., Chest Pain Emergency"
@@ -388,6 +423,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Reason for Presentation</Label>
                 <TextArea 
+                    id="reason-presentation"
                     value={formData.PresentIllnessHistory.ReasonForPresentation}
                     onChange={(e) => handleChange('PresentIllnessHistory', 'ReasonForPresentation', e.target.value)}
                     placeholder="Describe the main complaint..."
@@ -451,6 +487,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Past Medical History</Label>
                 <TextArea 
+                    id="past-medical-history"
                     value={formData.ElicitedHistory.PastMedicalHistory}
                     onChange={(e) => handleChange('ElicitedHistory', 'PastMedicalHistory', e.target.value)}
                     placeholder="Previous conditions..."
@@ -460,6 +497,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Allergies</Label>
                 <Input 
+                    id="allergies"
                     value={formData.ElicitedHistory.Allergies}
                     onChange={(e) => handleChange('ElicitedHistory', 'Allergies', e.target.value)}
                     placeholder="e.g. Penicillin"
@@ -469,6 +507,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Medications</Label>
                 <Input 
+                    id="medications"
                     value={formData.ElicitedHistory.Medications}
                     onChange={(e) => handleChange('ElicitedHistory', 'Medications', e.target.value)}
                     placeholder="Current medications..."
@@ -478,6 +517,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Labs</Label>
                 <TextArea 
+                    id="labs"
                     value={formData.ElicitedHistory.Labs}
                     onChange={(e) => handleChange('ElicitedHistory', 'Labs', e.target.value)}
                     placeholder="Relevant lab results..."
@@ -487,6 +527,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
             <div>
                 <Label>Imaging Results</Label>
                 <TextArea 
+                    id="imagings"
                     value={formData.ElicitedHistory.Imagings}
                     onChange={(e) => handleChange('ElicitedHistory', 'Imagings', e.target.value)}
                     placeholder="X-rays, CT scans, etc..."
@@ -504,6 +545,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
                 <div className="bg-emerald-50/30 p-4 rounded-2xl border border-emerald-100/50">
                     <Label>What Has Been Done</Label>
                     <TextArea 
+                        id="what-has-been-done"
                         value={formData.InterventionsAndRecommendations.WhatHasBeenDone}
                         onChange={(e) => handleChange('InterventionsAndRecommendations', 'WhatHasBeenDone', e.target.value)}
                         placeholder="Initial actions taken..."
@@ -513,6 +555,7 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
                 <div className="bg-blue-50/30 p-4 rounded-2xl border border-blue-100/50">
                     <Label>What Needs To Be Done</Label>
                     <TextArea 
+                        id="what-needs-to-be-done"
                         value={formData.InterventionsAndRecommendations.WhatNeedsToBeDone}
                         onChange={(e) => handleChange('InterventionsAndRecommendations', 'WhatNeedsToBeDone', e.target.value)}
                         placeholder="Next steps..."
@@ -524,14 +567,21 @@ export const FormProcessor: React.FC<FormProcessorProps> = ({ onSuccess, initial
 
         {/* Validation Errors */}
         {validationErrors.length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-2">
+          <div id="validation-errors" className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-2">
             <h4 className="text-sm font-semibold text-red-900 flex items-center">
               <span className="w-5 h-5 bg-red-200 rounded-full flex items-center justify-center text-red-700 text-xs mr-2">!</span>
               Please fill in all required fields:
             </h4>
             <ul className="list-disc list-inside space-y-1 text-sm text-red-800 ml-7">
               {validationErrors.map((error, index) => (
-                <li key={index}>{error}</li>
+                <li key={index}>
+                  <button
+                    onClick={() => scrollToField(error.fieldId)}
+                    className="text-left hover:text-red-900 hover:underline cursor-pointer transition-colors"
+                  >
+                    {error.message}
+                  </button>
+                </li>
               ))}
             </ul>
           </div>
