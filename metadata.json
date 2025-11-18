@@ -1,0 +1,5 @@
+{
+  "name": "TransferTycoon - Scenario Builder",
+  "description": "A no-code tool to build clinical scenarios and generate structured JSON files.",
+  "requestFramePermissions": []
+}
